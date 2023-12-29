@@ -17,7 +17,7 @@
         <div class="header-box px-3 pt-4 pb-4">
             <h1 class="fs-4 nav-logo">
                 <span class="text-black text-uppercase font-weight-bold">
-                    <a class="link-dark text-decoration-none" href="/">CRM BACKOFFICE</a>
+                    <a class="link-dark text-decoration-none" href="/crm_backoffice/templatesffice/templates/static">CRM BACKOFFICE</a>
                 </span>
             </h1>
         </div>
@@ -50,7 +50,7 @@
             <li>
                 <hr>
             </li>
-            <li><a href="/accounts/logout" class="bar-item text-decoration-none px-3 py-3 d-block">
+            <li><a href="{% url 'crm_auth:logout' %}" class="bar-item text-decoration-none px-3 py-3 d-block">
                 <span><i class="fas fa-sign-out-alt"></i></span><span class="px-1"> Выход</span>
             </a></li>
         </ul>
