@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crm_backoffice.crm_auth.apps.CrmAuthConfig'
+    'crm_auth'
 ]
 
 MIDDLEWARE = [
