@@ -1,3 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import RoleUser
+
+
+@admin.register(RoleUser)
+class RoleAdmin(admin.ModelAdmin):
+    class Meta:
+        model = RoleUser
+        fields = "user", "role"
