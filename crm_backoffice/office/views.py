@@ -149,9 +149,15 @@ class AdsUpdateView(UpdateView):
 
 class AdsStatListView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
+        a = Ads.objects.first()
+        print(a.lead_set.first().customer_set.count())
         context = {
-            'ads': {
-
-            },
+            'ads': [
+                {
+                    'pk': ad.pk,
+                    'name': ad.name,
+                    'leads_count': ad.lead_set.count(),
+                } for ad in Ads.objects.all()
+            ],
         }
         return render(request, 'ads/ads-statistic.html', context=context)

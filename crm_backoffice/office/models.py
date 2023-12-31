@@ -31,6 +31,8 @@ class Ads(models.Model):
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     channel = models.CharField(max_length=50)
     budget = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
+    leads_count = models.IntegerField(max_length=20, null=True)
+    customers_count = models.IntegerField(max_length=20, null=True)
 
     def __str__(self):
         return self.name
