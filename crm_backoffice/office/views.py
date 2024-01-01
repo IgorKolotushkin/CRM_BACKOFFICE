@@ -4,7 +4,7 @@ from django.urls import reverse_lazy, reverse
 from django.views import View
 from django.views.generic import ListView, CreateView, DeleteView, DetailView, UpdateView
 
-from .models import Lead, Customer, Product, Ads
+from .models import Lead, Customer, Product, Ads, Contract
 
 
 class OfficeStatView(View):
@@ -26,7 +26,7 @@ class CustomerView(ListView):
 
 class CustomerCreateView(CreateView):
     queryset = Customer.objects.select_related("lead")
-    fields = ["lead", ]
+    fields = "lead", "contract"
     template_name = "customers/customers-create.html"
     success_url = reverse_lazy("office:customers")
 
@@ -150,14 +150,50 @@ class AdsUpdateView(UpdateView):
 class AdsStatListView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         a = Ads.objects.first()
-        print(a.lead_set.first().customer_set.count())
+        print(a.lead_set.first().customer_set.first().contract.cost)
         context = {
             'ads': [
                 {
                     'pk': ad.pk,
                     'name': ad.name,
                     'leads_count': ad.lead_set.count(),
+                    'customers_count': sum(
+                        [lead.customer_set.count() for lead in ad.lead_set.all()]
+                    ),
                 } for ad in Ads.objects.all()
             ],
         }
         return render(request, 'ads/ads-statistic.html', context=context)
+
+
+class ContractView(ListView):
+    template_name = "contracts/contracts-list.html"
+    queryset = Contract.objects.all()
+    context_object_name = "contracts"
+
+
+class ContractCreateView(CreateView):
+    model = Contract
+    fields = "name", "product", "start_date", "end_date", "cost", "file"
+    template_name = "contracts/contracts-create.html"
+    success_url = reverse_lazy("office:contracts")
+
+
+class ContractDeleteView(DeleteView):
+    model = Contract
+    template_name = "contracts/contracts-delete.html"
+    success_url = reverse_lazy("office:contracts")
+
+
+class ContractDetailView(DetailView):
+    model = Contract
+    template_name = "contracts/contracts-detail.html"
+
+
+class ContractUpdateView(UpdateView):
+    model = Contract
+    template_name = "contracts/contracts-edit.html"
+    fields = "name", "product", "start_date", "end_date", "cost", "file"
+
+    def get_success_url(self):
+        return reverse("office:detail-contract", kwargs={"pk": self.object.pk})
