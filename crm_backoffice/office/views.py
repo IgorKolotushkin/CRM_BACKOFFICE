@@ -5,6 +5,7 @@ from django.views import View
 from django.views.generic import ListView, CreateView, DeleteView, DetailView, UpdateView
 
 from .models import Lead, Customer, Product, Ads, Contract
+from .forms import LeadCreateForm
 
 
 class OfficeStatView(View):
@@ -49,8 +50,9 @@ class LeadView(ListView):
 
 
 class LeadCreateView(CreateView):
+    form_class = LeadCreateForm
     model = Lead
-    fields = "first_name", "last_name", "email", "phone", "ads"
+    # fields = "first_name", "last_name", "email", "phone", "ads"
     template_name = "leads/leads-create.html"
     success_url = reverse_lazy("office:leads")
 
