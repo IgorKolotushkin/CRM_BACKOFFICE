@@ -5,7 +5,7 @@ from django.views import View
 from django.views.generic import ListView, CreateView, DeleteView, DetailView, UpdateView
 
 from .models import Lead, Customer, Product, Ads, Contract
-from .forms import LeadCreateForm
+from .forms import LeadForm, ProductForm, AdsForm, CustomerForm, ContractForm
 
 
 class OfficeStatView(View):
@@ -26,8 +26,7 @@ class CustomerView(ListView):
 
 
 class CustomerCreateView(CreateView):
-    queryset = Customer.objects.select_related("lead")
-    fields = "lead", "contract"
+    form_class = CustomerForm
     template_name = "customers/customers-create.html"
     success_url = reverse_lazy("office:customers")
 
@@ -50,9 +49,7 @@ class LeadView(ListView):
 
 
 class LeadCreateView(CreateView):
-    form_class = LeadCreateForm
-    model = Lead
-    # fields = "first_name", "last_name", "email", "phone", "ads"
+    form_class = LeadForm
     template_name = "leads/leads-create.html"
     success_url = reverse_lazy("office:leads")
 
@@ -69,9 +66,9 @@ class LeadDetailView(DetailView):
 
 
 class LeadUpdateView(UpdateView):
-    model = Lead
+    queryset = Lead.objects.all()
+    form_class = LeadForm
     template_name = "leads/leads-edit.html"
-    fields = "first_name", "last_name", "email", "phone", "ads"
 
     def get_success_url(self):
         return reverse("office:detail-lead", kwargs={"pk": self.object.pk})
@@ -84,8 +81,7 @@ class ProductView(ListView):
 
 
 class ProductCreateView(CreateView):
-    model = Product
-    fields = "name", "description", "cost"
+    form_class = ProductForm
     template_name = "products/products-create.html"
     success_url = reverse_lazy("office:products")
 
@@ -102,9 +98,9 @@ class ProductDetailView(DetailView):
 
 
 class ProductUpdateView(UpdateView):
-    model = Product
+    queryset = Product.objects.all()
+    form_class = ProductForm
     template_name = "products/products-edit.html"
-    fields = "name", "description", "cost"
 
     def get_success_url(self):
         return reverse("office:detail-product", kwargs={"pk": self.object.pk})
@@ -117,8 +113,7 @@ class AdsView(ListView):
 
 
 class AdsCreateView(CreateView):
-    model = Ads
-    fields = "name", "product", "channel", "budget"
+    form_class = AdsForm
     template_name = "ads/ads-create.html"
     success_url = reverse_lazy("office:ads")
 
@@ -135,18 +130,12 @@ class AdsDetailView(DetailView):
 
 
 class AdsUpdateView(UpdateView):
-    model = Ads
+    queryset = Ads.objects.all()
+    form_class = AdsForm
     template_name = "ads/ads-edit.html"
-    fields = "name", "product", "channel", "budget"
 
     def get_success_url(self):
         return reverse("office:detail-ad", kwargs={"pk": self.object.pk})
-
-
-# class AdsStatListView(ListView):
-#     template_name = "ads/ads-statistic.html"
-#     queryset = Ads.objects.all()
-#     context_object_name = "ads"
 
 
 class AdsStatListView(View):
@@ -175,8 +164,9 @@ class ContractView(ListView):
 
 
 class ContractCreateView(CreateView):
-    model = Contract
-    fields = "name", "product", "start_date", "end_date", "cost", "file"
+    # model = Contract
+    # fields = "name", "product", "start_date", "end_date", "cost", "file"
+    form_class = ContractForm
     template_name = "contracts/contracts-create.html"
     success_url = reverse_lazy("office:contracts")
 
@@ -193,9 +183,11 @@ class ContractDetailView(DetailView):
 
 
 class ContractUpdateView(UpdateView):
-    model = Contract
+    # model = Contract
+    queryset = Contract.objects.all()
+    form_class = ContractForm
     template_name = "contracts/contracts-edit.html"
-    fields = "name", "product", "start_date", "end_date", "cost", "file"
+    # fields = "name", "product", "start_date", "end_date", "cost", "file"
 
     def get_success_url(self):
         return reverse("office:detail-contract", kwargs={"pk": self.object.pk})
