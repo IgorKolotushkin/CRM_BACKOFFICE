@@ -12,17 +12,7 @@
             <div class="card px-5 py-5" id="form1">
                 <form method="post">
                     {% csrf_token %}
-                    <div>
-                        {% for field in form %}
-                        <div class="col-md-14">
-                            <label class="form-label">{{field.label_tag}}</label>
-                            <div>{{field}}</div>
-                            {% if field.errors%}
-                            <div class="error">{{field.errors}}</div>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                    </div>
+                    {{ form.as_p }}
                     <button class="btn btn-primary" type="submit">Войти</button>
                 </form>
             </div>

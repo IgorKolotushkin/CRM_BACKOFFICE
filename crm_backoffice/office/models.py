@@ -8,7 +8,7 @@ def upload_directory_path(instance, filename):
 class Lead(models.Model):
     first_name = models.CharField(max_length=30, null=False)
     last_name = models.CharField(max_length=50, null=False)
-    email = models.EmailField(max_length=50, null=False)
+    email = models.EmailField(max_length=50, null=False, unique=True)
     phone = models.CharField(max_length=12, null=False, blank=False)
     ads = models.ForeignKey('Ads', on_delete=models.PROTECT, null=True)
 

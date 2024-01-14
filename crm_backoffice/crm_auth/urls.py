@@ -7,5 +7,7 @@ app_name = "crm_auth"
 
 urlpatterns = [
     path('', CrmLoginView.as_view(), name='login'),
-    path('', LogoutView.as_view(next_page=reverse_lazy('crm_auth:login')), name='logout')
+    path('', LogoutView.as_view(
+        next_page=reverse_lazy('crm_auth:login')
+    ), name='logout')
 ]

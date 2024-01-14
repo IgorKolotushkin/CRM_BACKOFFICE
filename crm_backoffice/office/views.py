@@ -66,12 +66,14 @@ class LeadDetailView(DetailView):
 
 
 class LeadUpdateView(UpdateView):
-    queryset = Lead.objects.all()
     form_class = LeadForm
     template_name = "leads/leads-edit.html"
 
     def get_success_url(self):
         return reverse("office:detail-lead", kwargs={"pk": self.object.pk})
+
+    def get_queryset(self):
+        return Lead.objects.filter(pk=self.kwargs.get('pk'))
 
 
 class ProductView(ListView):
@@ -98,12 +100,14 @@ class ProductDetailView(DetailView):
 
 
 class ProductUpdateView(UpdateView):
-    queryset = Product.objects.all()
     form_class = ProductForm
     template_name = "products/products-edit.html"
 
     def get_success_url(self):
         return reverse("office:detail-product", kwargs={"pk": self.object.pk})
+
+    def get_queryset(self):
+        return Product.objects.filter(pk=self.kwargs.get('pk'))
 
 
 class AdsView(ListView):
@@ -130,12 +134,14 @@ class AdsDetailView(DetailView):
 
 
 class AdsUpdateView(UpdateView):
-    queryset = Ads.objects.all()
     form_class = AdsForm
     template_name = "ads/ads-edit.html"
 
     def get_success_url(self):
         return reverse("office:detail-ad", kwargs={"pk": self.object.pk})
+
+    def get_queryset(self):
+        return Ads.objects.filter(pk=self.kwargs.get('pk'))
 
 
 class AdsStatListView(View):
@@ -164,8 +170,6 @@ class ContractView(ListView):
 
 
 class ContractCreateView(CreateView):
-    # model = Contract
-    # fields = "name", "product", "start_date", "end_date", "cost", "file"
     form_class = ContractForm
     template_name = "contracts/contracts-create.html"
     success_url = reverse_lazy("office:contracts")
@@ -183,11 +187,11 @@ class ContractDetailView(DetailView):
 
 
 class ContractUpdateView(UpdateView):
-    # model = Contract
-    queryset = Contract.objects.all()
     form_class = ContractForm
     template_name = "contracts/contracts-edit.html"
-    # fields = "name", "product", "start_date", "end_date", "cost", "file"
 
     def get_success_url(self):
         return reverse("office:detail-contract", kwargs={"pk": self.object.pk})
+
+    def get_queryset(self):
+        return Contract.objects.filter(pk=self.kwargs.get('pk'))
