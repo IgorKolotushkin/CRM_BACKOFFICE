@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
@@ -8,7 +9,7 @@ from .models import Lead, Customer, Product, Ads, Contract
 from .forms import LeadForm, ProductForm, AdsForm, CustomerForm, ContractForm
 
 
-class OfficeStatView(View):
+class OfficeStatView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest) -> HttpResponse:
         context = {
             'products_count': Product.objects.count(),
@@ -19,24 +20,28 @@ class OfficeStatView(View):
         return render(request, 'users/index.html', context=context)
 
 
-class CustomerView(ListView):
+class CustomerView(PermissionRequiredMixin, ListView):
+    permission_required = "office.view_customer"
     template_name = "customers/customers-list.html"
     queryset = Customer.objects.all()
     context_object_name = "customers"
 
 
-class CustomerCreateView(CreateView):
+class CustomerCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = "office.add_customer"
     form_class = CustomerForm
     template_name = "customers/customers-create.html"
     success_url = reverse_lazy("office:customers")
 
 
-class CustomerDetailView(DetailView):
+class CustomerDetailView(PermissionRequiredMixin, DetailView):
+    permission_required = "office.view_customer"
     model = Customer
     template_name = "customers/customers-detail.html"
 
 
-class CustomerDeleteView(DeleteView):
+class CustomerDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = "office.delete_customer"
     model = Customer
     template_name = "customers/customers-delete.html"
     success_url = reverse_lazy("office:customers")
