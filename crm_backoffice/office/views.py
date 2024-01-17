@@ -47,30 +47,35 @@ class CustomerDeleteView(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy("office:customers")
 
 
-class LeadView(ListView):
+class LeadView(PermissionRequiredMixin, ListView):
+    permission_required = "office.view_lead"
     template_name = "leads/leads-list.html"
     queryset = Lead.objects.select_related("ads")
     context_object_name = "leads"
 
 
-class LeadCreateView(CreateView):
+class LeadCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = "office.add_lead"
     form_class = LeadForm
     template_name = "leads/leads-create.html"
     success_url = reverse_lazy("office:leads")
 
 
-class LeadDeleteView(DeleteView):
+class LeadDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = "office.delete_lead"
     model = Lead
     template_name = "leads/leads-delete.html"
     success_url = reverse_lazy("office:leads")
 
 
-class LeadDetailView(DetailView):
+class LeadDetailView(PermissionRequiredMixin, DetailView):
+    permission_required = "office.view_lead"
     model = Lead
     template_name = "leads/leads-detail.html"
 
 
-class LeadUpdateView(UpdateView):
+class LeadUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = "office.change_lead"
     form_class = LeadForm
     template_name = "leads/leads-edit.html"
 
@@ -81,30 +86,35 @@ class LeadUpdateView(UpdateView):
         return Lead.objects.filter(pk=self.kwargs.get('pk'))
 
 
-class ProductView(ListView):
+class ProductView(PermissionRequiredMixin, ListView):
+    permission_required = "office.view_product"
     template_name = "products/products-list.html"
     queryset = Product.objects.all()
     context_object_name = "products"
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = "office.add_product"
     form_class = ProductForm
     template_name = "products/products-create.html"
     success_url = reverse_lazy("office:products")
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = "office.delete_product"
     model = Product
     template_name = "products/products-delete.html"
     success_url = reverse_lazy("office:products")
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(PermissionRequiredMixin, DetailView):
+    permission_required = "office.view_product"
     model = Product
     template_name = "products/products-detail.html"
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = "office.change_product"
     form_class = ProductForm
     template_name = "products/products-edit.html"
 
@@ -115,30 +125,35 @@ class ProductUpdateView(UpdateView):
         return Product.objects.filter(pk=self.kwargs.get('pk'))
 
 
-class AdsView(ListView):
+class AdsView(PermissionRequiredMixin, ListView):
+    permission_required = "office.view_ads"
     template_name = "ads/ads-list.html"
     queryset = Ads.objects.select_related('product')
     context_object_name = "ads"
 
 
-class AdsCreateView(CreateView):
+class AdsCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = "office.add_ads"
     form_class = AdsForm
     template_name = "ads/ads-create.html"
     success_url = reverse_lazy("office:ads")
 
 
-class AdsDeleteView(DeleteView):
+class AdsDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = "office.delete_ads"
     model = Ads
     template_name = "ads/ads-delete.html"
     success_url = reverse_lazy("office:ads")
 
 
-class AdsDetailView(DetailView):
+class AdsDetailView(PermissionRequiredMixin, DetailView):
+    permission_required = "office.view_ads"
     model = Ads
     template_name = "ads/ads-detail.html"
 
 
-class AdsUpdateView(UpdateView):
+class AdsUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = "office.change_ads"
     form_class = AdsForm
     template_name = "ads/ads-edit.html"
 
@@ -168,30 +183,35 @@ class AdsStatListView(View):
         return render(request, 'ads/ads-statistic.html', context=context)
 
 
-class ContractView(ListView):
+class ContractView(PermissionRequiredMixin, ListView):
+    permission_required = "office.view_contract"
     template_name = "contracts/contracts-list.html"
     queryset = Contract.objects.all()
     context_object_name = "contracts"
 
 
-class ContractCreateView(CreateView):
+class ContractCreateView(PermissionRequiredMixin, CreateView):
+    permission_required = "office.add_contract"
     form_class = ContractForm
     template_name = "contracts/contracts-create.html"
     success_url = reverse_lazy("office:contracts")
 
 
-class ContractDeleteView(DeleteView):
+class ContractDeleteView(PermissionRequiredMixin, DeleteView):
+    permission_required = "office.delete_contract"
     model = Contract
     template_name = "contracts/contracts-delete.html"
     success_url = reverse_lazy("office:contracts")
 
 
-class ContractDetailView(DetailView):
+class ContractDetailView(PermissionRequiredMixin, DetailView):
+    permission_required = "office.view_contract"
     model = Contract
     template_name = "contracts/contracts-detail.html"
 
 
-class ContractUpdateView(UpdateView):
+class ContractUpdateView(PermissionRequiredMixin, UpdateView):
+    permission_required = "office.change_contract"
     form_class = ContractForm
     template_name = "contracts/contracts-edit.html"
 
