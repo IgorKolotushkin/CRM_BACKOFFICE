@@ -3,6 +3,9 @@ from django.contrib.auth.forms import AuthenticationForm, UsernameField
 
 
 class UserLoginForm(AuthenticationForm):
+    """
+    Класс для описания формы аутентификации пользователя
+    """
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)
         super(UserLoginForm, self).__init__(*args, **kwargs)

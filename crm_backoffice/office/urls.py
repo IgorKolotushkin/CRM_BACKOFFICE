@@ -29,9 +29,9 @@ from .views import (
     ContractUpdateView,
 )
 
-app_name = "office"
+app_name: str = "office"
 
-urlpatterns = [
+urlpatterns: list = [
     path('stat/', OfficeStatView.as_view(), name='index'),
     path('leads/', LeadView.as_view(), name='leads'),
     path('leads/<int:pk>', LeadDetailView.as_view(), name='detail-lead'),

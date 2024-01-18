@@ -11,7 +11,7 @@ from .forms import LeadForm, ProductForm, AdsForm, CustomerForm, ContractForm
 
 class OfficeStatView(LoginRequiredMixin, View):
     def get(self, request: HttpRequest) -> HttpResponse:
-        context = {
+        context: dict = {
             'products_count': Product.objects.count(),
             'advertisements_count': Ads.objects.count(),
             'leads_count': Lead.objects.count(),
@@ -71,7 +71,7 @@ class LeadDeleteView(PermissionRequiredMixin, DeleteView):
 class LeadDetailView(PermissionRequiredMixin, DetailView):
     permission_required = "office.view_lead"
     model = Lead
-    template_name = "leads/leads-detail.html"
+    template_name= "leads/leads-detail.html"
 
 
 class LeadUpdateView(PermissionRequiredMixin, UpdateView):

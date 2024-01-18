@@ -5,6 +5,9 @@ from .forms import UserLoginForm
 
 
 class CrmLoginView(LoginView):
+    """
+    Класс для отображения страницы и формы аутентификации пользователя
+    """
     authentication_form = UserLoginForm
-    template_name = "registration/login.html"
+    template_name: str = "registration/login.html"
     next_page = reverse_lazy("office:index")
