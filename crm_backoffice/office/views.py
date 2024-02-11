@@ -71,7 +71,7 @@ class LeadDeleteView(PermissionRequiredMixin, DeleteView):
 class LeadDetailView(PermissionRequiredMixin, DetailView):
     permission_required = "office.view_lead"
     model = Lead
-    template_name= "leads/leads-detail.html"
+    template_name = "leads/leads-detail.html"
 
 
 class LeadUpdateView(PermissionRequiredMixin, UpdateView):
@@ -166,11 +166,11 @@ class AdsUpdateView(PermissionRequiredMixin, UpdateView):
 
 class AdsStatListView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
-        a = Ads.objects.first()
-        d = a.lead_set.first()
-        print(d.ads.budget)  # Это реклама
-        c = d.customer_set.first()
-        print(c.contract.cost)
+        # a = Ads.objects.first()
+        # d = a.lead_set.first()
+        # print(d.ads.budget)  # Это реклама
+        # c = d.customer_set.first()
+        # print(c.contract.cost)
         context = {
             'ads': [
                 {
@@ -180,7 +180,8 @@ class AdsStatListView(View):
                     'customers_count': sum(
                         [lead.customer_set.count() for lead in ad.lead_set.all()]
                     ),
-                    'profit': 4,
+                    'profit': ([sum([con.contract.cost for con in a.customer_set.all()]) for a in ad.lead_set.all()][0] /
+                               sum([a.ads.budget for a in ad.lead_set.all()])) * 100,
                 } for ad in Ads.objects.all()
             ],
         }
