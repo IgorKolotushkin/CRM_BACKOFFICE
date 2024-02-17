@@ -73,8 +73,8 @@ def test_superuser_create_lead(admin_client):
     }
     count_lead = len(Lead.objects.all())
     url = reverse('office:create-lead')
-    response = admin_client.post(url, data)
-    # response = csrf_client.post(url, fields=data)
+    # response = admin_client.post(url, data)
+    response = csrf_client.post(url, data)
     assert response.status_code == 200
     # assert response.context['form'] == ''
     assert count_lead + 1 == len(Lead.objects.all())

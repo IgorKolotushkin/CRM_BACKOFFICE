@@ -1,6 +1,7 @@
 import pytest
 from django.db import connections
 from django.test import Client
+from django.conf import settings
 from django.urls import reverse
 from django.contrib.auth import authenticate, login
 from crm_auth.models import User
@@ -12,7 +13,6 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 def run_sql(sql):
     conn = psycopg2.connect(
         database='crm_db',
-        # dbname='the_copied_db',
         user='postgres',
         password='postgres',
         host='127.0.0.1',
@@ -26,8 +26,6 @@ def run_sql(sql):
 
 @pytest.fixture(scope='session', autouse=True)
 def django_db_setup():
-    from django.conf import settings
-
     settings.DATABASES['default']['NAME'] = 'test_db'
     settings.DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
     settings.DATABASES['default']['USER'] = 'postgres'
