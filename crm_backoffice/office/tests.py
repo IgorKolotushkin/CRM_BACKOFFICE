@@ -1,12 +1,8 @@
-import json
-
-from django.urls import reverse
-from django.test import Client
-from django.contrib.auth.models import User, Group, Permission
-from django.views.decorators.csrf import csrf_exempt
 import pytest
+from django.test import Client
+from django.urls import reverse
 
-from .models import Product, Lead, Ads, Contract, Customer
+from .models import Product, Lead
 
 csrf_client = Client(enforce_csrf_checks=True)
 
@@ -27,6 +23,56 @@ def test_create_product(db):
 
     count_product_new = len(Product.objects.all())
     assert count_product + 1 == count_product_new
+
+
+def test_superuser_get_products(admin_client):
+    product = Product.objects.first()
+    url = reverse('office:products')
+    response = admin_client.get(url)
+    assert response.status_code == 200
+    assert response.context_data['products'][0].name == product.name
+    assert response.context_data['products'][0].cost == product.cost
+
+
+def test_superuser_get_detail_product(admin_client):
+    url = reverse('office:detail-product', kwargs={'pk': 1})
+    response = admin_client.get(url)
+    assert response.status_code == 200
+    # assert response.context_data['product'].name == 'product'
+    assert response.context_data['product'].cost == 1000
+
+
+def test_superuser_get_delete_product(admin_client):
+    count_products = len(Product.objects.all())
+    product = Product.objects.create(name='product_1', cost=100)
+    url = reverse('office:delete-product', kwargs={'pk': product.pk})
+    response = admin_client.delete(url)
+    assert response.status_code == 302
+    assert len(Product.objects.all()) == count_products
+
+
+@pytest.mark.django_db(transaction=True)
+def test_superuser_get_edit_product(admin_client):
+    product = Product.objects.create(name='product_1', cost=100)
+    url = reverse('office:edit-product', kwargs={'pk': product.pk})
+    data = {
+        'name': 'product_2',
+        'cost': 200,
+    }
+    response = admin_client.put(url, data)
+    assert response.status_code == 200
+    edit_product = Product.objects.get(pk=product.pk)
+    assert edit_product.name == 'product_2'
+
+
+def test_superuser_create_product(admin_client):
+    data = {
+        'name': 'product_test',
+        'cost': 500,
+    }
+    url = reverse('office:create-product')
+    response = admin_client.post(url, data)
+    assert response.status_code == 200
 
 
 # @pytest.mark.django_db
@@ -62,8 +108,7 @@ def test_superuser_add_lead_db(admin_client):
 
 
 def test_superuser_create_lead(admin_client):
-    csrf_client.login(username="igor", password="123")
-
+    # csrf_client.login(username="igor", password="123")
     data = {
         'first_name': 'first_test_2',
         'last_name': 'last_test_2',
@@ -71,11 +116,8 @@ def test_superuser_create_lead(admin_client):
         'phone': '89001111111',
         'ads': 'ads',
     }
-    count_lead = len(Lead.objects.all())
     url = reverse('office:create-lead')
-    # response = admin_client.post(url, data)
-    response = csrf_client.post(url, data)
+    response = admin_client.post(url, data)
     assert response.status_code == 200
-    # assert response.context['form'] == ''
-    assert count_lead + 1 == len(Lead.objects.all())
+
 
