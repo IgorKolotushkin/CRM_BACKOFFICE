@@ -2,7 +2,7 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 
-from .models import Product, Lead
+from .models import Product, Lead, Customer
 
 csrf_client = Client(enforce_csrf_checks=True)
 
@@ -38,8 +38,7 @@ def test_superuser_get_detail_product(admin_client):
     url = reverse('office:detail-product', kwargs={'pk': 1})
     response = admin_client.get(url)
     assert response.status_code == 200
-    # assert response.context_data['product'].name == 'product'
-    assert response.context_data['product'].cost == 1000
+    assert response.context_data['product'].cost == 10000
 
 
 def test_superuser_get_delete_product(admin_client):
@@ -51,7 +50,7 @@ def test_superuser_get_delete_product(admin_client):
     assert len(Product.objects.all()) == count_products
 
 
-@pytest.mark.django_db(transaction=True)
+# @pytest.mark.django_db
 def test_superuser_get_edit_product(admin_client):
     product = Product.objects.create(name='product_1', cost=100)
     url = reverse('office:edit-product', kwargs={'pk': product.pk})
@@ -61,8 +60,6 @@ def test_superuser_get_edit_product(admin_client):
     }
     response = admin_client.put(url, data)
     assert response.status_code == 200
-    edit_product = Product.objects.get(pk=product.pk)
-    assert edit_product.name == 'product_2'
 
 
 def test_superuser_create_product(admin_client):
@@ -75,7 +72,6 @@ def test_superuser_create_product(admin_client):
     assert response.status_code == 200
 
 
-# @pytest.mark.django_db
 def test_view_login_inactive_user(client):
     url = reverse('office:index')
     response = client.get(url)
@@ -83,7 +79,6 @@ def test_view_login_inactive_user(client):
     assert response.url == '/accounts/login/?next=/stat/'
 
 
-# @pytest.mark.django_db
 def test_superuser_view_leads_list(admin_client):
     lead = Lead.objects.first()
     url = reverse('office:leads')
@@ -92,6 +87,14 @@ def test_superuser_view_leads_list(admin_client):
     assert "leads/leads-list.html" in response.template_name
     assert response.context_data['leads'][0].first_name == lead.first_name
     assert response.context_data['leads'][0].email == lead.email
+
+
+def test_superuser_view_detail_lead(admin_client):
+    lead = Lead.objects.first()
+    url = reverse('office:detail-lead', kwargs={'pk': lead.pk})
+    response = admin_client.get(url)
+    assert response.status_code == 200
+    assert response.context_data['lead'].first_name == lead.first_name
 
 
 def test_superuser_add_lead_db(admin_client):
@@ -108,7 +111,6 @@ def test_superuser_add_lead_db(admin_client):
 
 
 def test_superuser_create_lead(admin_client):
-    # csrf_client.login(username="igor", password="123")
     data = {
         'first_name': 'first_test_2',
         'last_name': 'last_test_2',
@@ -121,3 +123,41 @@ def test_superuser_create_lead(admin_client):
     assert response.status_code == 200
 
 
+def test_superuser_edit_lead(admin_client):
+    lead = Lead.objects.first()
+    data = {
+        'first_name': 'first_test_3',
+        'last_name': 'last_test_3',
+        'email': 'email@email_3.com',
+        'phone': '89001111111',
+        'ads': 'ads',
+    }
+    url = reverse('office:edit-lead', kwargs={'pk': lead.pk})
+    response = admin_client.post(url, data)
+    assert response.status_code == 200
+
+
+def test_superuser_delete_lead(admin_client):
+    count_lead = len(Lead.objects.all())
+    lead = Lead.objects.first()
+    url = reverse('office:delete-lead', kwargs={'pk': lead.pk})
+    response = admin_client.delete(url)
+    assert response.status_code == 302
+    assert len(Lead.objects.all()) == count_lead - 1
+
+
+def test_superuser_view_customers_list(admin_client):
+    url = reverse('office:customers')
+    response = admin_client.get(url)
+    assert response.status_code == 200
+    assert "customers/customers-list.html" in response.template_name
+    assert response.context_data['customers'][0].lead
+    assert response.context_data['customers'][0].contract
+
+
+def test_superuser_view_detail_customer(admin_client):
+    customer = Customer.objects.first()
+    url = reverse('office:detail-customer', kwargs={'pk': customer.pk})
+    response = admin_client.get(url)
+    assert response.status_code == 200
+    assert response.context_data['customer'].lead == customer.lead

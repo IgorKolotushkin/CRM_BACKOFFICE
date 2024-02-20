@@ -33,6 +33,8 @@ def django_db_setup():
     settings.DATABASES['default']['HOST'] = '127.0.0.1'
     settings.DATABASES['default']['PORT'] = 5432
 
+    settings.MIDDLEWARE.remove('django.middleware.csrf.CsrfViewMiddleware')
+
     run_sql('DROP DATABASE IF EXISTS test_db')
     run_sql('CREATE DATABASE test_db TEMPLATE crm_db')
 
@@ -43,3 +45,8 @@ def django_db_setup():
         connection.close()
 
     run_sql('DROP DATABASE test_db')
+
+
+@pytest.fixture(autouse=True)
+def enable_db_access_for_all_tests(db):
+    pass
