@@ -2,7 +2,7 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 
-from .models import Product, Lead, Customer
+from .models import Product, Lead, Customer, Ads
 
 csrf_client = Client(enforce_csrf_checks=True)
 
@@ -97,7 +97,7 @@ def test_superuser_view_detail_lead(admin_client):
     assert response.context_data['lead'].first_name == lead.first_name
 
 
-def test_superuser_add_lead_db(admin_client):
+def test_add_lead_db():
     count_leads = len(Lead.objects.all())
     lead = Lead.objects.create(
         first_name='first_test',
@@ -123,7 +123,7 @@ def test_superuser_create_lead(admin_client):
     assert response.status_code == 200
 
 
-def test_superuser_edit_lead(admin_client):
+def test_superuser_edit_lead(admin_client, db):
     lead = Lead.objects.first()
     data = {
         'first_name': 'first_test_3',
@@ -133,7 +133,7 @@ def test_superuser_edit_lead(admin_client):
         'ads': 'ads',
     }
     url = reverse('office:edit-lead', kwargs={'pk': lead.pk})
-    response = admin_client.post(url, data)
+    response = admin_client.put(url, data)
     assert response.status_code == 200
 
 
@@ -161,3 +161,47 @@ def test_superuser_view_detail_customer(admin_client):
     response = admin_client.get(url)
     assert response.status_code == 200
     assert response.context_data['customer'].lead == customer.lead
+
+
+def test_add_customer():
+    count_customers = len(Customer.objects.all())
+    customer = Customer.objects.create(
+        lead_id=1,
+    )
+    assert customer.lead.first_name == 'Igor1'
+    assert len(Customer.objects.all()) == count_customers + 1
+
+
+def test_superuser_delete_customer(admin_client):
+    customer = Customer.objects.first()
+    url = reverse('office:delete-customer', kwargs={'pk': customer.pk})
+    response = admin_client.delete(url)
+    assert response.status_code == 302
+
+
+def test_superuser_view_ads_list(admin_client):
+    url = reverse('office:ads')
+    response = admin_client.get(url)
+    assert response.status_code == 200
+    assert "ads/ads-list.html" in response.template_name
+    assert response.context_data['ads'][0].name
+
+
+def test_superuser_view_detail_ad(admin_client):
+    ad = Ads.objects.first()
+    url = reverse('office:detail-ad', kwargs={'pk': ad.pk})
+    response = admin_client.get(url)
+    assert response.status_code == 200
+    assert response.context_data['ads'].name == ad.name
+
+
+def test_add_ad_in_db():
+    count_ads = len(Ads.objects.all())
+    ad = Ads.objects.create(
+        name='ad',
+        product=1,
+        channel='channel',
+        budget=1,
+    )
+    assert ad.name == 'ad'
+    assert len(Ads.objects.all()) == count_ads + 1

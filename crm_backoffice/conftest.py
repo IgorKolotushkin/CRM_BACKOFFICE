@@ -1,12 +1,8 @@
 import pytest
-from django.db import connections
-from django.test import Client
 from django.conf import settings
-from django.urls import reverse
-from django.contrib.auth import authenticate, login
-from crm_auth.models import User
 
 import psycopg2
+from django.db import connections
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 
