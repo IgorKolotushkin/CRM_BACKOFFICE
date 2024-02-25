@@ -1,4 +1,4 @@
-import pytest
+"""Модуль с тестами для CRM"""
 from django.test import Client
 from django.urls import reverse
 
@@ -16,7 +16,12 @@ def test_login_user():
     response = csrf_client.post(url, data)
 
 
-def test_create_product(db):
+def test_create_product() -> None:
+    """
+    тест создания продукта в базе данных
+    :param db:
+    :return: None
+    """
     count_product = len(Product.objects.all())
     product = Product.objects.create(name="product", cost=1000)
     assert product.name == "product" and product.cost == 1000
@@ -97,7 +102,11 @@ def test_superuser_view_detail_lead(admin_client):
     assert response.context_data['lead'].first_name == lead.first_name
 
 
-def test_add_lead_db():
+def test_add_lead_db() -> None:
+    """
+    Тест для проверки создания лида в базе данных.
+    :return: None
+    """
     count_leads = len(Lead.objects.all())
     lead = Lead.objects.create(
         first_name='first_test',
@@ -110,7 +119,12 @@ def test_add_lead_db():
     assert len(Lead.objects.all()) == count_leads + 1
 
 
-def test_superuser_create_lead(admin_client):
+def test_superuser_create_lead(admin_client) -> None:
+    """
+    Тест для проверки View создания лида.
+    :param admin_client:
+    :return: None
+    """
     data = {
         'first_name': 'first_test_2',
         'last_name': 'last_test_2',
@@ -123,7 +137,12 @@ def test_superuser_create_lead(admin_client):
     assert response.status_code == 200
 
 
-def test_superuser_edit_lead(admin_client, db):
+def test_superuser_edit_lead(admin_client) -> None:
+    """
+    Тест для проверки View редактирования лида.
+    :param admin_client:
+    :return: None
+    """
     lead = Lead.objects.first()
     data = {
         'first_name': 'first_test_3',
@@ -137,7 +156,12 @@ def test_superuser_edit_lead(admin_client, db):
     assert response.status_code == 200
 
 
-def test_superuser_delete_lead(admin_client):
+def test_superuser_delete_lead(admin_client) -> None:
+    """
+    Тест для проверки View для удаления лида.
+    :param admin_client:
+    :return: None
+    """
     count_lead = len(Lead.objects.all())
     lead = Lead.objects.first()
     url = reverse('office:delete-lead', kwargs={'pk': lead.pk})
@@ -146,7 +170,12 @@ def test_superuser_delete_lead(admin_client):
     assert len(Lead.objects.all()) == count_lead - 1
 
 
-def test_superuser_view_customers_list(admin_client):
+def test_superuser_view_customers_list(admin_client) -> None:
+    """
+    Тест для проверки View просмотра всех customer.
+    :param admin_client:
+    :return: None
+    """
     url = reverse('office:customers')
     response = admin_client.get(url)
     assert response.status_code == 200
@@ -155,7 +184,12 @@ def test_superuser_view_customers_list(admin_client):
     assert response.context_data['customers'][0].contract
 
 
-def test_superuser_view_detail_customer(admin_client):
+def test_superuser_view_detail_customer(admin_client) -> None:
+    """
+    Тест для проверки View просмотра детальной информации о customer.
+    :param admin_client:
+    :return: None
+    """
     customer = Customer.objects.first()
     url = reverse('office:detail-customer', kwargs={'pk': customer.pk})
     response = admin_client.get(url)
@@ -163,7 +197,11 @@ def test_superuser_view_detail_customer(admin_client):
     assert response.context_data['customer'].lead == customer.lead
 
 
-def test_add_customer():
+def test_add_customer() -> None:
+    """
+    Тест для проверки создания customer в базе данных.
+    :return: None
+    """
     count_customers = len(Customer.objects.all())
     customer = Customer.objects.create(
         lead_id=1,
@@ -172,14 +210,24 @@ def test_add_customer():
     assert len(Customer.objects.all()) == count_customers + 1
 
 
-def test_superuser_delete_customer(admin_client):
+def test_superuser_delete_customer(admin_client) -> None:
+    """
+    Тест для проверки view по удалению customer
+    :param admin_client:
+    :return: None
+    """
     customer = Customer.objects.first()
     url = reverse('office:delete-customer', kwargs={'pk': customer.pk})
     response = admin_client.delete(url)
     assert response.status_code == 302
 
 
-def test_superuser_view_ads_list(admin_client):
+def test_superuser_view_ads_list(admin_client) -> None:
+    """
+    Тест для проверки View для просмотра всех рекламных компаний
+    :param admin_client:
+    :return: None
+    """
     url = reverse('office:ads')
     response = admin_client.get(url)
     assert response.status_code == 200
@@ -187,7 +235,12 @@ def test_superuser_view_ads_list(admin_client):
     assert response.context_data['ads'][0].name
 
 
-def test_superuser_view_detail_ad(admin_client):
+def test_superuser_view_detail_ad(admin_client) -> None:
+    """
+    Тест пля проверки View для просмотра детальной информации о рекламной компании.
+    :param admin_client:
+    :return: None
+    """
     ad = Ads.objects.first()
     url = reverse('office:detail-ad', kwargs={'pk': ad.pk})
     response = admin_client.get(url)
@@ -195,7 +248,11 @@ def test_superuser_view_detail_ad(admin_client):
     assert response.context_data['ads'].name == ad.name
 
 
-def test_add_ad_in_db():
+def test_add_ad_in_db() -> None:
+    """
+    Тест для проверки создания рекламной компании в базе данных.
+    :return: None
+    """
     count_ads = len(Ads.objects.all())
     ad = Ads.objects.create(
         name='ad',

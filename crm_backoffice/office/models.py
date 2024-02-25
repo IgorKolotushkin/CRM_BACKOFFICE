@@ -1,3 +1,5 @@
+"""Модуль с моделями для CRM"""
+
 from django.db import models
 
 
@@ -8,7 +10,7 @@ def upload_directory_path(instance, filename):
     :param filename: имя файла
     :return: путь загрузки файла
     """
-    return 'upload/name_{0}/{1}'.format(instance.name, filename)
+    return f'upload/name_{instance.name}/{filename}'
 
 
 class Lead(models.Model):
@@ -50,7 +52,7 @@ class Product(models.Model):
         Метод для вывода человекочиаемого названия продукта.
         :return: Название продукта
         """
-        return self.name
+        return f"{self.name}"
 
 
 class Ads(models.Model):
@@ -67,7 +69,7 @@ class Ads(models.Model):
         Метод для вывода человекочиаемого названия рекламы.
         :return: Название рекламы
         """
-        return self.name
+        return f"{self.name}"
 
 
 class Contract(models.Model):

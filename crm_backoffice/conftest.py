@@ -34,7 +34,6 @@ def django_db_setup():
     run_sql('DROP DATABASE IF EXISTS test_db')
     run_sql('CREATE DATABASE test_db TEMPLATE crm_db')
 
-
     yield
 
     for connection in connections.all():
