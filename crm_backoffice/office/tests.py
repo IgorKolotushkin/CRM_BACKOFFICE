@@ -1,8 +1,10 @@
 """Модуль с тестами для CRM"""
+import datetime
+
 from django.test import Client
 from django.urls import reverse
 
-from .models import Product, Lead, Customer, Ads
+from .models import Product, Lead, Customer, Ads, Contract
 
 csrf_client = Client(enforce_csrf_checks=True)
 
@@ -197,7 +199,7 @@ def test_superuser_view_detail_customer(admin_client) -> None:
     assert response.context_data['customer'].lead == customer.lead
 
 
-def test_add_customer() -> None:
+def test_add_customer_in_db() -> None:
     """
     Тест для проверки создания customer в базе данных.
     :return: None
@@ -248,6 +250,18 @@ def test_superuser_view_detail_ad(admin_client) -> None:
     assert response.context_data['ads'].name == ad.name
 
 
+def test_superuser_delete_ad(admin_client) -> None:
+    """
+    Тест для проверки view по удалению ad
+    :param admin_client:
+    :return: None
+    """
+    ad = Ads.objects.first()
+    url = reverse('office:delete-ad', kwargs={'pk': ad.pk})
+    response = admin_client.delete(url)  # исправить в базе каскадное удаление
+    assert response.status_code == 302
+
+
 def test_add_ad_in_db() -> None:
     """
     Тест для проверки создания рекламной компании в базе данных.
@@ -262,3 +276,60 @@ def test_add_ad_in_db() -> None:
     )
     assert ad.name == 'ad'
     assert len(Ads.objects.all()) == count_ads + 1
+
+
+def test_superuser_view_contracts_list(admin_client) -> None:
+    """
+    Тест для проверки View для просмотра всех контрактов
+    :param admin_client:
+    :return: None
+    """
+    url = reverse('office:contracts')
+    response = admin_client.get(url)
+    assert response.status_code == 200
+    assert "contracts/contracts-list.html" in response.template_name
+    assert response.context_data['contracts'][0].name
+
+
+def test_superuser_view_detail_contract(admin_client) -> None:
+    """
+    Тест для проверки View просмотра детальной информации о контракте.
+    :param admin_client:
+    :return: None
+    """
+    contract = Contract.objects.first()
+    url = reverse('office:detail-contract', kwargs={'pk': contract.pk})
+    response = admin_client.get(url)
+    assert response.status_code == 200
+    assert response.context_data['contract'].name == contract.name
+
+
+def test_superuser_delete_contract(admin_client) -> None:
+    """
+    Тест для проверки view по удалению контракта
+    :param admin_client:
+    :return: None
+    """
+    contract = Contract.objects.first()
+    url = reverse('office:delete-contract', kwargs={'pk': contract.pk})
+    response = admin_client.delete(url)
+    assert response.status_code == 302
+
+
+def test_add_contract_in_db() -> None:
+    """
+    Тест для проверки добавления контракта в базе данных.
+    :return: None
+    """
+    product = Product.objects.first()
+    count_contracts = len(Contract.objects.all())
+    contract = Contract.objects.create(
+        name='contract',
+        start_date=datetime.datetime.now().date().strftime(format='%d.%m.%Y'),
+        end_date=datetime.datetime.now().date().strftime(format='%d.%m.%Y'),
+        product=product.pk,
+        cost=100.0,
+        file='file'
+    )
+    assert contract.name == 'contract'
+    assert len(Contract.objects.all()) == count_contracts + 1
