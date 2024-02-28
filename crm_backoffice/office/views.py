@@ -166,12 +166,6 @@ class AdsUpdateView(PermissionRequiredMixin, UpdateView):
 
 class AdsStatListView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
-        # a = Ads.objects.first()
-        # d = a.lead_set.first()
-        # s = sum([con.contract.cost for a in a.lead_set.all() for con in a.customer_set.all()])
-        print(s)  # Это реклама
-        # c = d.customer_set.first()
-        # print(c.contract.cost)
         context = {
             'ads': [
                 {
@@ -179,15 +173,14 @@ class AdsStatListView(View):
                     'name': ad.name,
                     'leads_count': ad.lead_set.count(),
                     'customers_count': sum(
-                        [lead.customer_set.count() for lead in ad.lead_set.all()]
+                        lead.customer_set.count() for lead in ad.lead_set.all()
                     ),
                     'profit': (sum(
-                        [one_ad.ads.budget / sum(
+                        [sum(
                             [con.contract.cost for con in one_ad.customer_set.all()]
-                            ) for one_ad in ad.lead_set.all()
-                        ]
+                            ) / one_ad.ads.budget for one_ad in ad.lead_set.all()]
                         )) * 100,
-                } for ad in Ads.objects.all()   # sum([a.ads.budget for a in ad.lead_set.all()]) / ...
+                } for ad in Ads.objects.all()
             ],
         }
         return render(request, 'ads/ads-statistic.html', context=context)
