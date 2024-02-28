@@ -21,7 +21,7 @@ class Lead(models.Model):
     last_name: str = models.CharField(max_length=50, null=False)
     email: str = models.EmailField(max_length=50, null=False, unique=True)
     phone: str = models.CharField(max_length=12, null=False, blank=False)
-    ads: models.ForeignKey = models.ForeignKey('Ads', on_delete=models.PROTECT, null=True)
+    ads: models.ForeignKey = models.ForeignKey('Ads', on_delete=models.CASCADE, null=True)
 
     def __str__(self) -> str:
         """
@@ -60,7 +60,7 @@ class Ads(models.Model):
     Класс модель для описания рекламы.
     """
     name: str = models.CharField(max_length=100, null=False, blank=False)
-    product: models.ForeignKey = models.ForeignKey(Product, on_delete=models.PROTECT)
+    product: models.ForeignKey = models.ForeignKey(Product, on_delete=models.CASCADE)
     channel: str = models.CharField(max_length=50)
     budget: float = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
 
@@ -79,9 +79,9 @@ class Contract(models.Model):
     name: str = models.CharField(max_length=100, null=False, blank=False)
     start_date = models.DateField()
     end_date = models.DateField()
-    product: models.ForeignKey = models.ForeignKey(Product, on_delete=models.PROTECT)
+    product: models.ForeignKey = models.ForeignKey(Product, on_delete=models.CASCADE)
     cost: float = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
-    file = models.FileField(upload_to=upload_directory_path)
+    file = models.FileField(upload_to=upload_directory_path, blank=True)
 
     def __str__(self) -> str:
         """

@@ -204,11 +204,12 @@ def test_add_customer_in_db() -> None:
     Тест для проверки создания customer в базе данных.
     :return: None
     """
+    lead = Lead.objects.first()
     count_customers = len(Customer.objects.all())
     customer = Customer.objects.create(
-        lead_id=1,
+        lead=lead,
     )
-    assert customer.lead.first_name == 'Igor1'
+    assert customer.lead == lead
     assert len(Customer.objects.all()) == count_customers + 1
 
 
@@ -258,8 +259,26 @@ def test_superuser_delete_ad(admin_client) -> None:
     """
     ad = Ads.objects.first()
     url = reverse('office:delete-ad', kwargs={'pk': ad.pk})
-    response = admin_client.delete(url)  # исправить в базе каскадное удаление
+    response = admin_client.delete(url)
     assert response.status_code == 302
+
+
+def test_superuser_edit_ad(admin_client) -> None:
+    """
+    Тест для проверки View редактирования рекламы.
+    :param admin_client:
+    :return: None
+    """
+    ad = Ads.objects.first()
+    data = {
+        'name':'ad_2',
+        'product':Product.objects.first(),
+        'channel':'channel',
+        'budget':1,
+    }
+    url = reverse('office:edit-ad', kwargs={'pk': ad.pk})
+    response = admin_client.post(url, data)
+    assert response.status_code == 200
 
 
 def test_add_ad_in_db() -> None:
@@ -270,7 +289,7 @@ def test_add_ad_in_db() -> None:
     count_ads = len(Ads.objects.all())
     ad = Ads.objects.create(
         name='ad',
-        product=1,
+        product=Product.objects.first(),
         channel='channel',
         budget=1,
     )
@@ -321,15 +340,52 @@ def test_add_contract_in_db() -> None:
     Тест для проверки добавления контракта в базе данных.
     :return: None
     """
-    product = Product.objects.first()
     count_contracts = len(Contract.objects.all())
     contract = Contract.objects.create(
         name='contract',
-        start_date=datetime.datetime.now().date().strftime(format='%d.%m.%Y'),
-        end_date=datetime.datetime.now().date().strftime(format='%d.%m.%Y'),
-        product=product.pk,
+        start_date=datetime.datetime.now().date().strftime(format='%Y-%m-%d'),
+        end_date=datetime.datetime.now().date().strftime(format='%Y-%m-%d'),
+        product=Product.objects.first(),
         cost=100.0,
         file='file'
     )
     assert contract.name == 'contract'
     assert len(Contract.objects.all()) == count_contracts + 1
+
+
+def test_superuser_create_contract(admin_client) -> None:
+    """
+    Тест для проверки View создания контракта.
+    :param admin_client:
+    :return: None
+    """
+    data = {
+        'name':'contract',
+        'start_date':datetime.datetime.now().date().strftime(format='%Y-%m-%d'),
+        'end_date':datetime.datetime.now().date().strftime(format='%Y-%m-%d'),
+        'product':Product.objects.first(),
+        'cost':100.0,
+    }
+    url = reverse('office:create-contract')
+    response = admin_client.post(url, data)
+    assert response.status_code == 200
+
+
+def test_superuser_edit_contract(admin_client) -> None:
+    """
+    Тест для проверки View редактирования контракта.
+    :param admin_client:
+    :return: None
+    """
+    contract = Contract.objects.first()
+    data = {
+        'name':'contract_1',
+        'start_date':datetime.datetime.now().date().strftime(format='%Y-%m-%d'),
+        'end_date':datetime.datetime.now().date().strftime(format='%Y-%m-%d'),
+        'product':Product.objects.first(),
+        'cost':2000,
+    }
+    url = reverse('office:edit-contract', kwargs={'pk': contract.pk})
+    response = admin_client.post(url, data)
+    assert response.status_code == 200
+    
