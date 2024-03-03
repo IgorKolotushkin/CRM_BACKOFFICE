@@ -36,6 +36,9 @@ class CustomerView(PermissionRequiredMixin, ListView):
 
 
 class CustomerCreateView(PermissionRequiredMixin, CreateView):
+    """
+    View для создания Customer
+    """
     permission_required = "office.add_customer"
     form_class = CustomerForm
     template_name = "customers/customers-create.html"
@@ -43,12 +46,18 @@ class CustomerCreateView(PermissionRequiredMixin, CreateView):
 
 
 class CustomerDetailView(PermissionRequiredMixin, DetailView):
+    """
+    View для просмотра детальной информации по Customer
+    """
     permission_required = "office.view_customer"
     model = Customer
     template_name = "customers/customers-detail.html"
 
 
 class CustomerDeleteView(PermissionRequiredMixin, DeleteView):
+    """
+    View для удаления Customer
+    """
     permission_required = "office.delete_customer"
     model = Customer
     template_name = "customers/customers-delete.html"
@@ -56,6 +65,7 @@ class CustomerDeleteView(PermissionRequiredMixin, DeleteView):
 
 
 class LeadView(PermissionRequiredMixin, ListView):
+    """View для просмотра всех Lead."""
     permission_required = "office.view_lead"
     template_name = "leads/leads-list.html"
     queryset = Lead.objects.select_related("ads")
@@ -63,6 +73,9 @@ class LeadView(PermissionRequiredMixin, ListView):
 
 
 class LeadCreateView(PermissionRequiredMixin, CreateView):
+    """
+    View для создания Lead
+    """
     permission_required = "office.add_lead"
     form_class = LeadForm
     template_name = "leads/leads-create.html"
@@ -70,6 +83,9 @@ class LeadCreateView(PermissionRequiredMixin, CreateView):
 
 
 class LeadDeleteView(PermissionRequiredMixin, DeleteView):
+    """
+    View для удаления Lead
+    """
     permission_required = "office.delete_lead"
     model = Lead
     template_name = "leads/leads-delete.html"
@@ -77,12 +93,18 @@ class LeadDeleteView(PermissionRequiredMixin, DeleteView):
 
 
 class LeadDetailView(PermissionRequiredMixin, DetailView):
+    """
+    View для просмотра детальной информации по Lead
+    """
     permission_required = "office.view_lead"
     model = Lead
     template_name = "leads/leads-detail.html"
 
 
 class LeadUpdateView(PermissionRequiredMixin, UpdateView):
+    """
+    View для обновления информации по Lead
+    """
     permission_required = "office.change_lead"
     form_class = LeadForm
     template_name = "leads/leads-edit.html"
@@ -95,6 +117,9 @@ class LeadUpdateView(PermissionRequiredMixin, UpdateView):
 
 
 class ProductView(PermissionRequiredMixin, ListView):
+    """
+    View для просмотра всех Product
+    """
     permission_required = "office.view_product"
     template_name = "products/products-list.html"
     queryset = Product.objects.all()
@@ -102,6 +127,9 @@ class ProductView(PermissionRequiredMixin, ListView):
 
 
 class ProductCreateView(PermissionRequiredMixin, CreateView):
+    """
+    View для создания Product
+    """
     permission_required = "office.add_product"
     form_class = ProductForm
     template_name = "products/products-create.html"
@@ -109,6 +137,9 @@ class ProductCreateView(PermissionRequiredMixin, CreateView):
 
 
 class ProductDeleteView(PermissionRequiredMixin, DeleteView):
+    """
+    View для удаления Product
+    """
     permission_required = "office.delete_product"
     model = Product
     template_name = "products/products-delete.html"
@@ -116,12 +147,18 @@ class ProductDeleteView(PermissionRequiredMixin, DeleteView):
 
 
 class ProductDetailView(PermissionRequiredMixin, DetailView):
+    """
+    View для просмотра детальной информации о Product
+    """
     permission_required = "office.view_product"
     model = Product
     template_name = "products/products-detail.html"
 
 
 class ProductUpdateView(PermissionRequiredMixin, UpdateView):
+    """
+    View для изменении информации о Product
+    """
     permission_required = "office.change_product"
     form_class = ProductForm
     template_name = "products/products-edit.html"
@@ -134,6 +171,9 @@ class ProductUpdateView(PermissionRequiredMixin, UpdateView):
 
 
 class AdsView(PermissionRequiredMixin, ListView):
+    """
+    View для просмотра всех Ads
+    """
     permission_required = "office.view_ads"
     template_name = "ads/ads-list.html"
     queryset = Ads.objects.select_related('product')
@@ -141,6 +181,9 @@ class AdsView(PermissionRequiredMixin, ListView):
 
 
 class AdsCreateView(PermissionRequiredMixin, CreateView):
+    """
+    View для создания Ad
+    """
     permission_required = "office.add_ads"
     form_class = AdsForm
     template_name = "ads/ads-create.html"
@@ -148,6 +191,9 @@ class AdsCreateView(PermissionRequiredMixin, CreateView):
 
 
 class AdsDeleteView(PermissionRequiredMixin, DeleteView):
+    """
+    View для удаления Ad
+    """
     permission_required = "office.delete_ads"
     model = Ads
     template_name = "ads/ads-delete.html"
@@ -155,12 +201,18 @@ class AdsDeleteView(PermissionRequiredMixin, DeleteView):
 
 
 class AdsDetailView(PermissionRequiredMixin, DetailView):
+    """
+    View для просмотра детальной информации по Ad
+    """
     permission_required = "office.view_ads"
     model = Ads
     template_name = "ads/ads-detail.html"
 
 
 class AdsUpdateView(PermissionRequiredMixin, UpdateView):
+    """
+    View для обновления информации по Ad
+    """
     permission_required = "office.change_ads"
     form_class = AdsForm
     template_name = "ads/ads-edit.html"
@@ -173,6 +225,9 @@ class AdsUpdateView(PermissionRequiredMixin, UpdateView):
 
 
 class AdsStatListView(View):
+    """
+    View для просмотра статистики по рекламным компаниям
+    """
     def get(self, request: HttpRequest) -> HttpResponse:
         context = {
             'ads': [
@@ -195,6 +250,9 @@ class AdsStatListView(View):
 
 
 class ContractView(PermissionRequiredMixin, ListView):
+    """
+    View для просмотра всех Contracts
+    """
     permission_required = "office.view_contract"
     template_name = "contracts/contracts-list.html"
     queryset = Contract.objects.all()
@@ -202,6 +260,9 @@ class ContractView(PermissionRequiredMixin, ListView):
 
 
 class ContractCreateView(PermissionRequiredMixin, CreateView):
+    """
+    View для создания Contract
+    """
     permission_required = "office.add_contract"
     form_class = ContractForm
     template_name = "contracts/contracts-create.html"
@@ -209,6 +270,9 @@ class ContractCreateView(PermissionRequiredMixin, CreateView):
 
 
 class ContractDeleteView(PermissionRequiredMixin, DeleteView):
+    """
+    View для удаления Contract
+    """
     permission_required = "office.delete_contract"
     model = Contract
     template_name = "contracts/contracts-delete.html"
@@ -216,12 +280,18 @@ class ContractDeleteView(PermissionRequiredMixin, DeleteView):
 
 
 class ContractDetailView(PermissionRequiredMixin, DetailView):
+    """
+    View для просмотра детальной информации по Contract
+    """
     permission_required = "office.view_contract"
     model = Contract
     template_name = "contracts/contracts-detail.html"
 
 
 class ContractUpdateView(PermissionRequiredMixin, UpdateView):
+    """
+    View для обновления информации о Contract
+    """
     permission_required = "office.change_contract"
     form_class = ContractForm
     template_name = "contracts/contracts-edit.html"
