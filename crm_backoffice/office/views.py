@@ -1,3 +1,4 @@
+"""Модуль с View."""
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
@@ -10,7 +11,11 @@ from .forms import LeadForm, ProductForm, AdsForm, CustomerForm, ContractForm
 
 
 class OfficeStatView(LoginRequiredMixin, View):
+    """View начальной страницы"""
     def get(self, request: HttpRequest) -> HttpResponse:
+        """
+        Метод для получения статистики по всем категориям.
+        """
         context: dict = {
             'products_count': Product.objects.count(),
             'advertisements_count': Ads.objects.count(),
@@ -21,6 +26,9 @@ class OfficeStatView(LoginRequiredMixin, View):
 
 
 class CustomerView(PermissionRequiredMixin, ListView):
+    """
+    View для просмотра всех Customers
+    """
     permission_required = "office.view_customer"
     template_name = "customers/customers-list.html"
     queryset = Customer.objects.all()
