@@ -1,4 +1,4 @@
-"""Модуль с формами"""
+"""Модуль с формами."""
 from django import forms
 
 from .models import Ads, Lead, Product, Customer, Contract

@@ -21,7 +21,7 @@ def test_login_user():
 def test_create_product() -> None:
     """
     тест создания продукта в базе данных
-    :param db:
+    # :param db:
     :return: None
     """
     count_product = len(Product.objects.all())

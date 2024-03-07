@@ -42,6 +42,6 @@ def django_db_setup():
     run_sql('DROP DATABASE test_db')
 
 
-@pytest.fixture(autouse=True)
-def enable_db_access_for_all_tests(db):
-    pass
+# @pytest.fixture(autouse=True)
+# def enable_db_access_for_all_tests(db):
+#     pass
