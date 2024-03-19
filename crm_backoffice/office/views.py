@@ -1,6 +1,6 @@
 """Модуль с View."""
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.db.models import Count
+from django.db.models import Count, Sum
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
@@ -65,6 +65,19 @@ class CustomerDeleteView(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy("office:customers")
 
 
+class CustomerEditView(UpdateView):
+    # permission_required = "office.add_customer"
+    form_class = CustomerForm
+    template_name = "customers/customers-edit.html"
+    success_url = reverse_lazy("office:customers")
+
+    def get_success_url(self):
+        return reverse("office:detail-customer", kwargs={"pk": self.object.pk})
+
+    def get_queryset(self):
+        return Customer.objects.filter(pk=self.kwargs.get('pk'))
+
+
 class LeadView(PermissionRequiredMixin, ListView):
     """View для просмотра всех Lead."""
     permission_required = "office.view_lead"
@@ -115,6 +128,18 @@ class LeadUpdateView(PermissionRequiredMixin, UpdateView):
 
     def get_queryset(self):
         return Lead.objects.filter(pk=self.kwargs.get('pk'))
+
+
+class LeadToCustomerView(CreateView):  # PermissionRequiredMixin,
+    form_class = CustomerForm
+    template_name = "customers/customers-create.html"
+    success_url = reverse_lazy("office:customers")
+
+    def get_context_data(self, **kwargs):
+        context = super(LeadToCustomerView, self).get_context_data(**kwargs)
+        lead = Lead.objects.filter(pk=self.kwargs.get('pk'))
+        context['lead'] = lead[0]
+        return context
 
 
 class ProductView(PermissionRequiredMixin, ListView):
@@ -225,38 +250,26 @@ class AdsUpdateView(PermissionRequiredMixin, UpdateView):
         return Ads.objects.filter(pk=self.kwargs.get('pk'))
 
 
-class AdsStatListView(ListView):
-    template_name = "ads/ads-statistic.html"
-    context_object_name = "ads"
-
-    def get_queryset(self):
-        return Ads.objects.aggregate(
-            leads_count=Count('lead'),
-            customers_count=Count('lead__customer'),
-        )
-# class AdsStatListView(View):
-#     """
-#     View для просмотра статистики по рекламным компаниям
-#     """
-#     def get(self, request: HttpRequest) -> HttpResponse:
-#         context = {
-#             'ads': [
-#                 {
-#                     'pk': ad.pk,
-#                     'name': ad.name,
-#                     'leads_count': ad.lead_set.count(),
-#                     'customers_count': sum(
-#                         lead.customer_set.count() for lead in ad.lead_set.all()
-#                     ),
-#                     'profit': (sum(
-#                         [sum(
-#                             [con.contract.cost for con in one_ad.customer_set.all()]
-#                             ) / one_ad.ads.budget for one_ad in ad.lead_set.all()]
-#                         )) * 100,
-#                 } for ad in Ads.objects.all()
-#             ],
-#         }
-#         return render(request, 'ads/ads-statistic.html', context=context)
+class AdsStatListView(View):
+    """
+    View для просмотра статистики по рекламным компаниям
+    """
+    def get(self, request: HttpRequest) -> HttpResponse:
+        context = {
+            'ads': [
+                {
+                    'pk': ad.pk,
+                    'name': ad.name,
+                    'leads_count': ad.lead_set.count(),
+                    'customers_count': ad.lead_set.aggregate(customers_count=Count('customer'))['customers_count'],
+                    'profit': (
+                                  ad.lead_set.aggregate(sum_contr=Sum('customer__contract__cost'))['sum_contr']
+                                  / ad.lead_set.aggregate(sum_budget=Sum('ads__budget'))['sum_budget']
+                              ) * 100,
+                } for ad in Ads.objects.all()
+            ],
+        }
+        return render(request, 'ads/ads-statistic.html', context=context)
 
 
 class ContractView(PermissionRequiredMixin, ListView):
