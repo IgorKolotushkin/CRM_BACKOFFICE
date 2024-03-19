@@ -1,7 +1,7 @@
 """Модуль с View."""
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import Count, Sum
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, request
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views import View
@@ -13,6 +13,7 @@ from .forms import LeadForm, ProductForm, AdsForm, CustomerForm, ContractForm
 
 class OfficeStatView(LoginRequiredMixin, View):
     """View начальной страницы"""
+
     def get(self, request: HttpRequest) -> HttpResponse:
         """
         Метод для получения статистики по всем категориям.
@@ -135,11 +136,10 @@ class LeadToCustomerView(CreateView):  # PermissionRequiredMixin,
     template_name = "customers/customers-create.html"
     success_url = reverse_lazy("office:customers")
 
-    def get_context_data(self, **kwargs):
-        context = super(LeadToCustomerView, self).get_context_data(**kwargs)
+    def get(self, request, *args, **kwargs):
         lead = Lead.objects.filter(pk=self.kwargs.get('pk'))
-        context['lead'] = lead[0]
-        return context
+        form = CustomerForm(initial={'lead': lead[0], })
+        return render(request, 'customers/customers-create.html', {'form': form})
 
 
 class ProductView(PermissionRequiredMixin, ListView):
@@ -254,6 +254,7 @@ class AdsStatListView(View):
     """
     View для просмотра статистики по рекламным компаниям
     """
+
     def get(self, request: HttpRequest) -> HttpResponse:
         context = {
             'ads': [
@@ -261,11 +262,9 @@ class AdsStatListView(View):
                     'pk': ad.pk,
                     'name': ad.name,
                     'leads_count': ad.lead_set.count(),
-                    'customers_count': ad.lead_set.aggregate(customers_count=Count('customer'))['customers_count'],
-                    'profit': (
-                                  ad.lead_set.aggregate(sum_contr=Sum('customer__contract__cost'))['sum_contr']
-                                  / ad.lead_set.aggregate(sum_budget=Sum('ads__budget'))['sum_budget']
-                              ) * 100,
+                    'customers_count': ad.lead_set.aggregate(cust_count=Count('customer'))['cust_count'],
+                    'profit': round(ad.lead_set.aggregate(
+                        profit=(Sum('customer__contract__cost') / Sum('ads__budget')) * 100)['profit'], 1),
                 } for ad in Ads.objects.all()
             ],
         }
