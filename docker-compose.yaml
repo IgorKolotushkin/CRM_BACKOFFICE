@@ -4,18 +4,20 @@ services:
   django:
     build: .
     container_name: django
-#    command: python manage.py runserver 0.0.0.0:8000
+    command:
+#      - python manage.py migrate
+#      - python manage.py create_group
+      - python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/usr/src/crm_backoffice
+      - ./crm_backoffice:/usr/src/app
     ports:
       - "8000:8000"
     depends_on:
-      - postgres
+      - db
     networks:
       - backend
 
-
-  postgres:
+  db:
     image: postgres
     container_name: postgres
     restart: unless-stopped

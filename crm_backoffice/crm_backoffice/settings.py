@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-j#pe&ty1*&&lvs^qw7t70kqzo4@%bn38k+rk2ej+lnzu-lo51o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -82,7 +82,7 @@ DATABASES = {
         "NAME": "crm_db",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "postgres",
+        "HOST": "db",
         "PORT": 5432,
     }
 }
