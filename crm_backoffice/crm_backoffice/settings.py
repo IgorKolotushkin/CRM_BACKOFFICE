@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-j#pe&ty1*&&lvs^qw7t70kqzo4@%bn38k+rk2ej+lnzu-lo51o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
 
 
 # Application definition
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crm_auth',
     'office',
+    'django.contrib.postgres',
 ]
 
 MIDDLEWARE = [
@@ -81,7 +82,7 @@ DATABASES = {
         "NAME": "crm_db",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "127.0.0.1",
+        "HOST": "postgres",
         "PORT": 5432,
     }
 }
