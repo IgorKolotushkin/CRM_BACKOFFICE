@@ -1,3 +1,4 @@
+"""Модуль с url адресами для crm"""
 from django.urls import path
 
 from .views import (

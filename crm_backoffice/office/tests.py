@@ -6,21 +6,27 @@ from django.urls import reverse
 
 from .models import Product, Lead, Customer, Ads, Contract
 
-csrf_client = Client(enforce_csrf_checks=True)
 
-
-def test_login_user():
+def test_login_user(admin_client):
     data = {
         'name': 'igor',
         'password': '123',
     }
     url = reverse('crm_auth:login')
-    response = csrf_client.post(url, data)
+    response = admin_client.post(url, data)
+    assert response.status_code == 200
+
+
+def test_view_login_inactive_user(client):
+    url = reverse('office:index')
+    response = client.get(url)
+    assert response.status_code == 302
+    assert response.url == '/accounts/login/?next=/stat/'
 
 
 def test_create_product() -> None:
     """
-    тест создания продукта в базе данных
+    Тест создания продукта в базе данных
     # :param db:
     :return: None
     """
@@ -33,6 +39,11 @@ def test_create_product() -> None:
 
 
 def test_superuser_get_products(admin_client):
+    """
+    Тест для проверки View получения продукта.
+    :param admin_client:
+    :return: None
+    """
     product = Product.objects.first()
     url = reverse('office:products')
     response = admin_client.get(url)
@@ -42,13 +53,23 @@ def test_superuser_get_products(admin_client):
 
 
 def test_superuser_get_detail_product(admin_client):
+    """
+    Тест для проверки View получения детальной информации о продукте.
+    :param admin_client:
+    :return: None
+    """
     url = reverse('office:detail-product', kwargs={'pk': 1})
     response = admin_client.get(url)
     assert response.status_code == 200
     assert response.context_data['product'].cost == 10000
 
 
-def test_superuser_get_delete_product(admin_client):
+def test_superuser_delete_product(admin_client):
+    """
+    Тест для проверки View удаления продукта.
+    :param admin_client:
+    :return: None
+    """
     count_products = len(Product.objects.all())
     product = Product.objects.create(name='product_1', cost=100)
     url = reverse('office:delete-product', kwargs={'pk': product.pk})
@@ -57,8 +78,12 @@ def test_superuser_get_delete_product(admin_client):
     assert len(Product.objects.all()) == count_products
 
 
-# @pytest.mark.django_db
-def test_superuser_get_edit_product(admin_client):
+def test_superuser_edit_product(admin_client):
+    """
+    Тест для проверки View редактирования продукта.
+    :param admin_client:
+    :return: None
+    """
     product = Product.objects.create(name='product_1', cost=100)
     url = reverse('office:edit-product', kwargs={'pk': product.pk})
     data = {
@@ -70,6 +95,11 @@ def test_superuser_get_edit_product(admin_client):
 
 
 def test_superuser_create_product(admin_client):
+    """
+    Тест для проверки View создания продукта.
+    :param admin_client:
+    :return: None
+    """
     data = {
         'name': 'product_test',
         'cost': 500,
@@ -79,14 +109,12 @@ def test_superuser_create_product(admin_client):
     assert response.status_code == 200
 
 
-def test_view_login_inactive_user(client):
-    url = reverse('office:index')
-    response = client.get(url)
-    assert response.status_code == 302
-    assert response.url == '/accounts/login/?next=/stat/'
-
-
 def test_superuser_view_leads_list(admin_client):
+    """
+    Тест для проверки View просмотра лидов.
+    :param admin_client:
+    :return: None
+    """
     lead = Lead.objects.first()
     url = reverse('office:leads')
     response = admin_client.get(url)
@@ -97,6 +125,11 @@ def test_superuser_view_leads_list(admin_client):
 
 
 def test_superuser_view_detail_lead(admin_client):
+    """
+    Тест для проверки View просмотра детальной информации о lead.
+    :param admin_client:
+    :return: None
+    """
     lead = Lead.objects.first()
     url = reverse('office:detail-lead', kwargs={'pk': lead.pk})
     response = admin_client.get(url)
@@ -360,11 +393,11 @@ def test_superuser_create_contract(admin_client) -> None:
     :return: None
     """
     data = {
-        'name':'contract',
-        'start_date':datetime.datetime.now().date().strftime(format='%Y-%m-%d'),
-        'end_date':datetime.datetime.now().date().strftime(format='%Y-%m-%d'),
-        'product':Product.objects.first(),
-        'cost':100.0,
+        'name': 'contract',
+        'start_date': datetime.datetime.now().date().strftime(format='%Y-%m-%d'),
+        'end_date': datetime.datetime.now().date().strftime(format='%Y-%m-%d'),
+        'product': Product.objects.first(),
+        'cost': 100.0,
     }
     url = reverse('office:create-contract')
     response = admin_client.post(url, data)
@@ -379,11 +412,11 @@ def test_superuser_edit_contract(admin_client) -> None:
     """
     contract = Contract.objects.first()
     data = {
-        'name':'contract_1',
-        'start_date':datetime.datetime.now().date().strftime(format='%Y-%m-%d'),
-        'end_date':datetime.datetime.now().date().strftime(format='%Y-%m-%d'),
-        'product':Product.objects.first(),
-        'cost':2000,
+        'name': 'contract_1',
+        'start_date': datetime.datetime.now().date().strftime(format='%Y-%m-%d'),
+        'end_date': datetime.datetime.now().date().strftime(format='%Y-%m-%d'),
+        'product': Product.objects.first(),
+        'cost': 2000,
     }
     url = reverse('office:edit-contract', kwargs={'pk': contract.pk})
     response = admin_client.post(url, data)

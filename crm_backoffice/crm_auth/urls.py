@@ -1,3 +1,4 @@
+"""Модуль с url адресами для login и logout пользователя"""
 from django.contrib.auth.views import LogoutView
 from django.urls import path, reverse_lazy
 

@@ -1,5 +1,9 @@
+"""Модуль с формой для аутентификации пользователя"""
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
+
+
+ATTRS_USER: dict[str, str] = {"type": "text", "class": "form-control mb-4"}
 
 
 class UserLoginForm(AuthenticationForm):
@@ -10,5 +14,5 @@ class UserLoginForm(AuthenticationForm):
         self.request = kwargs.pop('request', None)
         super(UserLoginForm, self).__init__(*args, **kwargs)
 
-    username = UsernameField(widget=forms.TextInput(attrs={"type": "text", "class": "form-control mb-4"}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={"type": "text", "class": "form-control mb-4"}))
+    username: UsernameField = UsernameField(widget=forms.TextInput(attrs=ATTRS_USER))
+    password: forms.CharField = forms.CharField(widget=forms.PasswordInput(attrs=ATTRS_USER))
