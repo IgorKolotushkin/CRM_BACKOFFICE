@@ -4,14 +4,16 @@ services:
   django:
     build: .
     container_name: django
-    command:
-#      - python manage.py migrate
-#      - python manage.py create_group
-      - python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./crm_backoffice:/usr/src/app
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py create_group &&
+             python manage.py runserver 0.0.0.0:8000"
+#    volumes:
+#      - app_data:/usr/src/app  # ./crm_backoffice
     ports:
       - "8000:8000"
+    expose:
+      - 8000
     depends_on:
       - db
     networks:
@@ -39,3 +41,4 @@ networks:
 
 volumes:
   crm_db_data: {}
+  app_data: {}

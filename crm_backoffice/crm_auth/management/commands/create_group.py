@@ -43,9 +43,9 @@ class Command(BaseCommand):
         self.stdout.write("Создание групп ...")
 
         for group in groups_with_perms.items():
-            name_group: Group = Group.objects.create(name=group[0])
+            name_group: tuple = Group.objects.get_or_create(name=group[0])
             for perm in group[1]:
                 name_perm: Permission = Permission.objects.get(name=perm)
-                name_group.permissions.add(name_perm)
+                name_group[0].permissions.add(name_perm)
 
             self.stdout.write(f"Создана группа: {name_group}")

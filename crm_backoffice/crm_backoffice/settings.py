@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-j#pe&ty1*&&lvs^qw7t70kqzo4@%bn38k+rk2ej+lnzu-lo51o'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = int(os.environ.get("DEBUG", default=1))
 
 ALLOWED_HOSTS = ['*']
 
@@ -79,11 +79,11 @@ WSGI_APPLICATION = 'crm_backoffice.wsgi.application'
 DATABASES = {
     'default': {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "crm_db",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "db",
-        "PORT": 5432,
+        "NAME": os.environ.get("NAME_DB", default="crm_db"),
+        "USER": os.environ.get("USER_DB", default="postgres"),
+        "PASSWORD": os.environ.get("PASSWORD_DB", default="postgres"),
+        "HOST": os.environ.get("HOST_DB", default="db"),  # db
+        "PORT": int(os.environ.get("PORT_DB", default=5432)),
     }
 }
 
@@ -122,7 +122,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     'templates/static/',
 ]
