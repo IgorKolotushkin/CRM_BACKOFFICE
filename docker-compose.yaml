@@ -8,12 +8,14 @@ services:
       sh -c "python manage.py migrate &&
              python manage.py create_group &&
              python manage.py runserver 0.0.0.0:8000"
-#    volumes:
-#      - app_data:/usr/src/app  # ./crm_backoffice
+    volumes:
+      - upload:/usr/src/app/upload
     ports:
       - "8000:8000"
     expose:
       - 8000
+    env_file:
+      - .env
     depends_on:
       - db
     networks:
@@ -41,4 +43,4 @@ networks:
 
 volumes:
   crm_db_data: {}
-  app_data: {}
+  upload: {}

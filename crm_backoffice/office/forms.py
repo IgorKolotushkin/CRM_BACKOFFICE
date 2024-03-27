@@ -7,7 +7,7 @@ ATTRS_TEXT: dict[str, str] = {"type": "text", "class": "form-control mb-4"}
 ATTRS_EMAIL: dict[str, str] = {"type": "text", "class": "form-control mb-4"}
 ATTRS_DATE: dict[str, str] = {"type": "date", "class": "form-control mb-4"}
 ATTRS_NUMBER: dict[str, str] = {"type": "number", "class": "form-control mb-4"}
-ATTRS_FILE: dict[str, str] = {"type": "file"}  # , "class": "form-control mb-4"
+ATTRS_FILE: dict[str, str] = {"type": "file", "class": "form-control mb-4"}
 
 
 class LeadForm(forms.ModelForm):

@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-j#pe&ty1*&&lvs^qw7t70kqzo4@%bn38k+rk2ej+lnzu-lo51o'
+SECRET_KEY = os.environ.get("SECRET_KEY", default='django-insecure')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", default=1))
@@ -82,7 +82,7 @@ DATABASES = {
         "NAME": os.environ.get("NAME_DB", default="crm_db"),
         "USER": os.environ.get("USER_DB", default="postgres"),
         "PASSWORD": os.environ.get("PASSWORD_DB", default="postgres"),
-        "HOST": os.environ.get("HOST_DB", default="db"),  # db
+        "HOST": os.environ.get("HOST_DB", default="db"),
         "PORT": int(os.environ.get("PORT_DB", default=5432)),
     }
 }
